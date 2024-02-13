@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 
 function connectDB() {
   mongoose.connect(
-    "mongodb+srv://shujaabrar7:EHzrWhg7Jz9phVtQ@fusionwave.ts8ejiz.mongodb.net/fusionFight",
+    process.env.MONGODB_URI,
     {
       useNewUrlParser: true,
       useUnifiedTopology: true,
