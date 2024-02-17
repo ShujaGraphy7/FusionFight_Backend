@@ -11,7 +11,7 @@ const PORT = 3000;
 
 // Middleware
 app.use(cors({
-  origin: 'http://localhost:5173', // Replace with the actual port of your React app
+  origin: 'https://fusionfight.netlify.app/', // Replace with the actual port of your React app
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   credentials: true,
 }));
