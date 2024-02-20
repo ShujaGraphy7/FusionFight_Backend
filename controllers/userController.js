@@ -88,29 +88,34 @@ exports.getUserDetails = async (req, res) => {
 
 exports.updateUserPoints = async (req, res) => {
   try {
+    const { walletAddress } = req.params;
+
     // Get the current timestamp
     const currentTime = Date.now();
 
-    // Find all users
-    const allUsers = await User.find({}, 'walletAddress totalPoints lastTokenUpdate totalPoints');
+    // Find the current user
+    const currentUser = await User.findOne({ walletAddress }, 'walletAddress totalPoints lastTokenUpdate');
 
-    // Update points for each user
-    for (const user of allUsers) {
-      const { walletAddress, lastTokenUpdate } = user;
-
-      // Calculate time difference in hours
-      const timeDifferenceHours = (currentTime - lastTokenUpdate) / (1000 * 60 * 60);
-
-      // Update total points every 24 hours
-      if (timeDifferenceHours >= 24) {
-        await User.findOneAndUpdate(
-          { walletAddress },
-          { $inc: { totalPoints: 5 }, lastTokenUpdate: currentTime }
-        );
-      }
+    if (!currentUser) {
+      return res.status(404).json({ message: 'User not found' });
     }
 
-    res.status(200).json({ message: 'User points updated successfully' });
+    const { lastTokenUpdate } = currentUser;
+
+    // Calculate time difference in hours
+    const timeDifferenceHours = (currentTime - lastTokenUpdate) / (1000 * 60 * 60);
+
+    // Update total points only if 24 hours have passed since the last match
+    if (timeDifferenceHours >= 24) {
+      await User.findOneAndUpdate(
+        { walletAddress },
+        { $inc: { totalPoints: 5 }, lastTokenUpdate: currentTime }
+      );
+
+      res.status(200).json({ message: 'User points updated successfully' });
+    } else {
+      res.status(400).json({ message: 'User can receive bonus once in 24 hours' });
+    }
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Internal server error' });
