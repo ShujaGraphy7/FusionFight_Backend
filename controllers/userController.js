@@ -24,10 +24,13 @@ exports.registerUser = async (req, res) => {
       return res.status(400).json({ message: 'User with this wallet address already exists' });
     }
 
+    const lowercaseWalletAddress = walletAddress.toLowerCase();
+ 
+
     // Create a new user
     const newUser = new User({
       username,
-      walletAddress,
+      walletAddress: lowercaseWalletAddress,
     });
 
     // Save user to the database
