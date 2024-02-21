@@ -93,8 +93,14 @@ exports.updateUserPoints = async (req, res) => {
     // Get the current timestamp
     const currentTime = Date.now();
 
-    // Find the current user
-    const currentUser = await User.findOne({ walletAddress }, 'walletAddress totalPoints lastTokenUpdate');
+    // Convert the wallet address to lowercase for case-insensitive search
+    const lowercaseWalletAddress = walletAddress.toLowerCase();
+
+    // Find the current user using a case-insensitive search
+    const currentUser = await User.findOne(
+      { walletAddress: lowercaseWalletAddress },
+      'walletAddress totalPoints lastTokenUpdate'
+    );
 
     if (!currentUser) {
       return res.status(404).json({ message: 'User not found' });
@@ -108,7 +114,7 @@ exports.updateUserPoints = async (req, res) => {
     // Update total points only if 24 hours have passed since the last match
     if (timeDifferenceHours >= 24) {
       await User.findOneAndUpdate(
-        { walletAddress },
+        { walletAddress: lowercaseWalletAddress },
         { $inc: { totalPoints: 5 }, lastTokenUpdate: currentTime }
       );
 
@@ -121,3 +127,4 @@ exports.updateUserPoints = async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 };
+
