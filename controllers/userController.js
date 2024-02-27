@@ -52,10 +52,9 @@ exports.updateWonMatch = async (req, res) => {
     const { walletAddress } = req.params;
     const lowercaseWalletAddress = walletAddress.toLowerCase();
 
-
     // Increment the wonMatches and totalMatches counters for the specified user
     await User.findOneAndUpdate(
-      { walletAddress:lowercaseWalletAddress },
+      { walletAddress: lowercaseWalletAddress },
       { $inc: { wonMatches: 1, totalMatches: 1, totalPoints: 2 } }
     );
 
@@ -70,7 +69,6 @@ exports.updateLostMatch = async (req, res) => {
   try {
     const { walletAddress } = req.params;
     const lowercaseWalletAddress = walletAddress.toLowerCase();
-
 
     // Increment the lostMatches and totalMatches counters for the specified user
     await User.findOneAndUpdate(
@@ -149,5 +147,39 @@ exports.updateUserPoints = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+exports.isEligible = async (req, res) => {
+  try {
+    const { walletAddress } = req.params;
+    const lowercaseWalletAddress = walletAddress.toLowerCase();
+
+    // Find the user by wallet address
+    const user = await User.findOne({ walletAddress:lowercaseWalletAddress }, "walletAddress totalPoints lastTokenUpdate");
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Get the current timestamp
+    const currentTime = Date.now();
+
+    const { lastTokenUpdate } = user;
+
+    // Calculate time difference in hours
+    const timeDifferenceHours =
+      (currentTime - lastTokenUpdate) / (1000 * 60 * 60);
+
+    // Update total points only if 24 hours have passed since the last match
+    
+      
+    const isOk = timeDifferenceHours <= 24;
+
+    res.status(200).json({ data: { is_ok: isOk } });
+    
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error', error: error.message });
   }
 };
