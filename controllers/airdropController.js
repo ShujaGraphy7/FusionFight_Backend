@@ -4,14 +4,21 @@ const Balance = require("../SkaleAirdropHelper/balance");
 
 exports.claimAirdrop = async (req, res) => {
   try {
-    const { address } = req.params;
-    console.log(address);
+    const { walletAddress } = req.body;
+    const existingUser = await User.findOne({ walletAddress });
 
-    // if (!isAddress(address)) {
-    //   return res.status(400).json({ message: "Invalid Ethereum Address" });
-    // }
+    if (existingUser) {
+      // If a user with the same wallet address exists, throw an error
+      return res
+        .status(400)
+        .json({ message: "User with this wallet address already exists" });
+    }
 
-    const distribute = await Distribute({ address });
+    const lowercaseWalletAddress = walletAddress.toLowerCase();
+
+    const distribute = await Distribute({
+      walletAddress: lowercaseWalletAddress,
+    });
 
     res.status(200).json({ distribute });
   } catch (error) {
@@ -29,5 +36,3 @@ exports.getBalance = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
-
-
