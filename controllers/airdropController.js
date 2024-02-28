@@ -1,26 +1,26 @@
-// const {isAddress} = require("ethers");
 const Distribute = require("../SkaleAirdropHelper/distribute");
 const Balance = require("../SkaleAirdropHelper/balance");
+
+const User = require("../models/user");
 
 exports.claimAirdrop = async (req, res) => {
   try {
     const { walletAddress } = req.body;
+
     const existingUser = await User.findOne({ walletAddress });
 
     if (!existingUser) {
-      // If a user with the same wallet address exists, throw an error
-      return res
-        .status(400)
-        .json({ message: "User is not Exist in Game Database" });
+      return res.status(400).json({ message: "User does not exist in the Game Database" });
     }
 
     const lowercaseWalletAddress = walletAddress.toLowerCase();
 
-    const distribute = await Distribute({
+    // Assuming Distribute is an asynchronous function, make sure to use await
+    const distributeResult = await Distribute({
       walletAddress: lowercaseWalletAddress,
     });
 
-    res.status(200).json({ distribute });
+    res.status(200).json({ distributeResult });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal server error" });
