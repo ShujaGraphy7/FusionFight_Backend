@@ -159,7 +159,7 @@ exports.isEligible = async (req, res) => {
     const user = await User.findOne({ walletAddress:lowercaseWalletAddress }, "walletAddress totalPoints lastTokenUpdate");
 
     if (!user) {
-      return res.status(404).json({ message: "User not found" });
+      return res.status(404).json({ message: "User not found", data: { is_ok: false }  });
     }
 
     // Get the current timestamp
