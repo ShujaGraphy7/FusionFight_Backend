@@ -7,11 +7,11 @@ exports.claimAirdrop = async (req, res) => {
     const { walletAddress } = req.body;
     const existingUser = await User.findOne({ walletAddress });
 
-    if (existingUser) {
+    if (!existingUser) {
       // If a user with the same wallet address exists, throw an error
       return res
         .status(400)
-        .json({ message: "User with this wallet address already exists" });
+        .json({ message: "User is not Exist in Game Database" });
     }
 
     const lowercaseWalletAddress = walletAddress.toLowerCase();
