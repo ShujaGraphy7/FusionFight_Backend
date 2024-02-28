@@ -7,12 +7,6 @@ exports.claimAirdrop = async (req, res) => {
   try {
     const { walletAddress } = req.body;
 
-    const existingUser = await User.findOne({ walletAddress });
-
-    if (!existingUser) {
-      return res.status(400).json({ message: "User does not exist in the Game Database" });
-    }
-
     const lowercaseWalletAddress = walletAddress.toLowerCase();
 
     // Assuming Distribute is an asynchronous function, make sure to use await
