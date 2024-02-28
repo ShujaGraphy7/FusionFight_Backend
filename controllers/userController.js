@@ -156,25 +156,17 @@ exports.isEligible = async (req, res) => {
     const lowercaseWalletAddress = walletAddress.toLowerCase();
 
     // Find the user by wallet address
-    const user = await User.findOne({ walletAddress:lowercaseWalletAddress }, "walletAddress totalPoints lastTokenUpdate");
+    const user = await User.findOne({ walletAddress:lowercaseWalletAddress }, "walletAddress totalMatches");
 
     if (!user) {
       return res.status(404).json({ message: "User not found", data: { is_ok: false }  });
     }
 
     // Get the current timestamp
-    const currentTime = Date.now();
-
-    const { lastTokenUpdate } = user;
-
-    // Calculate time difference in hours
-    const timeDifferenceHours =
-      (currentTime - lastTokenUpdate) / (1000 * 60 * 60);
-
-    // Update total points only if 24 hours have passed since the last match
     
-      
-    const isOk = timeDifferenceHours <= 24;
+    const { totalMatches } = user;
+
+    const isOk = totalMatches > 0;
 
     res.status(200).json({ data: { is_ok: isOk } });
     
