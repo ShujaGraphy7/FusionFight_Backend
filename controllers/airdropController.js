@@ -1,17 +1,13 @@
 const Distribute = require("../SkaleAirdropHelper/distribute");
 const Balance = require("../SkaleAirdropHelper/balance");
 
-const User = require("../models/user");
-
 exports.claimAirdrop = async (req, res) => {
+  console.log(req)
   try {
-    const { walletAddress } = req.body;
+    const { walletAddress } = req.params;
 
-    const lowercaseWalletAddress = walletAddress.toLowerCase();
-
-    // Assuming Distribute is an asynchronous function, make sure to use await
     const distributeResult = await Distribute({
-      walletAddress: lowercaseWalletAddress,
+      address: walletAddress,
     });
 
     res.status(200).json({ distributeResult });
