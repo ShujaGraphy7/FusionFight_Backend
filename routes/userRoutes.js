@@ -10,5 +10,6 @@ router.get('/getUserDetails/:walletAddress', userController.getUserDetails);
 router.post('/updateUserPoints/:walletAddress', userController.updateUserPoints);
 
 router.get('/isEligible/:walletAddress', userController.isEligible);
+router.get('/isRegistered/:walletAddress', userController.isRegisteredUser);
 
 module.exports = router;

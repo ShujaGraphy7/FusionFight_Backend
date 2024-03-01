@@ -156,19 +156,44 @@ exports.isEligible = async (req, res) => {
     const lowercaseWalletAddress = walletAddress.toLowerCase();
 
     // Find the user by wallet address
-    const user = await User.findOne({ walletAddress:lowercaseWalletAddress }, "walletAddress totalMatches");
+    const user = await User.findOne({ walletAddress: lowercaseWalletAddress }, "walletAddress lastTokenUpdate");
 
     if (!user) {
-      return res.status(404).json({ message: "User not found", data: { is_ok: false }  });
+      return res.status(404).json({ message: "User not found", data: { is_ok: false } });
     }
 
     // Get the current timestamp
-    
-    const { totalMatches } = user;
+    const { lastTokenUpdate } = user;
 
-    const isOk = totalMatches > 0;
+    // Calculate the timestamp representing 24 hours ago
+    const twentyFourHoursAgo = Date.now() - (24 * 60 * 60 * 1000);
+
+    const isOk = lastTokenUpdate > twentyFourHoursAgo;
 
     res.status(200).json({ data: { is_ok: isOk } });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error', error: error.message });
+  }
+};
+
+
+
+exports.isRegisteredUser = async (req, res) => {
+  try {
+    const { walletAddress } = req.params;
+    const lowercaseWalletAddress = walletAddress.toLowerCase();
+
+    // Find the user by wallet address
+    const user = await User.findOne({ walletAddress:lowercaseWalletAddress });
+
+    if (!user) {
+      return res.status(404).json({data: { is_ok: false }  });
+    }
+
+
+    res.status(200).json({ data: { is_ok: true } });
     
   } catch (error) {
     console.error(error);
