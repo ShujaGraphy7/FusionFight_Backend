@@ -35,6 +35,7 @@ exports.registerUser = async (req, res) => {
     const newUser = new User({
       username,
       walletAddress: lowercaseWalletAddress,
+      totalPoints:50
     });
 
     // Save user to the database
