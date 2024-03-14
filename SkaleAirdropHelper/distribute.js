@@ -11,7 +11,6 @@ const wallet = new Wallet(PRIVATE_KEY, provider);
 
 async function Distribute({ address }) {
 	try {
-		console.log({address});
 		// Send a transaction to the specified address with the specified ETH value
 		const transaction = await wallet.sendTransaction({
 			to: address,
