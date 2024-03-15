@@ -10,7 +10,7 @@ exports.claimAirdrop = async (req, res) => {
     const provider = new JsonRpcProvider(RPC_URL);
     const balance = await provider.getBalance(walletAddress);
 
-    if (balance < 100000000000000) {
+    if (balance < 10000000000000) {
       // If balance is less than 0.00001 ethers, distribute airdrop
       const distributeResult = await Distribute({
         address: walletAddress,
