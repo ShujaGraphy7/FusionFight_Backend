@@ -4,6 +4,8 @@ const { JsonRpcProvider } = require("ethers");
 const { ethers } = require("ethers");
 const { RPC_URL } = require("../SkaleAirdropHelper/config");
 
+const provider = new JsonRpcProvider(RPC_URL);
+
 exports.claimAirdrop = async (req, res) => {
   try {
     const { walletAddress } = req.params;
@@ -36,6 +38,20 @@ exports.getBalance = async (req, res) => {
   try {
     const balance = await Balance();
     res.status(200).json({ balance });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+exports.getBalanceOf = async (req, res) => {
+  try {
+    const { walletAddress } = req.params;
+
+    const balance = await provider.getBalance(walletAddress);
+    const balanceString = balance.toString();
+
+    res.status(200).json({ balance: balanceString });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal server error" });

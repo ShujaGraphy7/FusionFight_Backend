@@ -119,7 +119,7 @@ exports.getUserDetails = async (req, res) => {
     // Fetch user details based on wallet address
     const userDetails = await User.findOne(
       { walletAddress: lowercaseWalletAddress },
-      "username walletAddress wonMatches lostMatches totalMatches totalPoints lastTokenUpdate"
+      "username walletAddress wonMatches lostMatches totalMatches totalPoints lastTokenUpdate referralCode"
     );
 
     if (!userDetails) {
